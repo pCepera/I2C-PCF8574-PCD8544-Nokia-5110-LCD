@@ -7,8 +7,8 @@ interface with the MCU. When using the minimum of three data-pins (DC/DIN/CLK),
 the remaining pins are fixed. Using an I2C interface the display can be connected
 to share the I2C bus (only two pins).
 
-This library is based on the Adafruit PCD8544 Nokia 5110 LCD
-library, but instead of directly using SPI it allows the display to be driven
+This library is based on the Adafruit PCD8544 Nokia 5110 LCD library, 
+but in addition to directly using SPI it allows the display to be driven
 via the (shared) I2C bus which only requires two data-lines (SDA and SCL).
 On the Arduino UNO, Nano and Pro Mini, these can be found on pins A4 and A5.
 
