@@ -108,6 +108,7 @@ void delayBlink(int nDelay, int nPin=2)
   serialTimeSpent();
 }
 
+
 void setup()
 {
   pinMode(2, OUTPUT);
@@ -233,15 +234,11 @@ void setup()
   serialTimeSpent(28);
 #endif
 
-/*
-  // Note: inverting the display is not supported by PCD8544 library
   display.invertDisplay(true);
   delayBlink(1000); 
   display.invertDisplay(false);
   delayBlink(1000); 
-*/
 
-/**/
   // draw many lines
   // Note: calling the display() method after each line takes most time in the I2C library
   // Therefore this test was moved to the end
@@ -417,22 +414,22 @@ void testdrawline() {
   display.clearDisplay();
   for (int16_t i=display.width()-1; i>=0; i-=4) {
     display.drawLine(display.width()-1, display.height()-1, i, 0, BLACK);
-    display.display();
   }
+  display.display();
   for (int16_t i=display.height()-1; i>=0; i-=4) {
     display.drawLine(display.width()-1, display.height()-1, 0, i, BLACK);
-    display.display();
   }
+  display.display();
   delayBlink(250);
 
   display.clearDisplay();
   for (int16_t i=0; i<display.height(); i+=4) {
     display.drawLine(display.width()-1, 0, 0, i, BLACK);
-    display.display();
   }
+  display.display();
   for (int16_t i=0; i<display.width(); i+=4) {
     display.drawLine(display.width()-1, 0, i, display.height()-1, BLACK); 
-    display.display();
   }
+  display.display();
   delayBlink(250);
 }
