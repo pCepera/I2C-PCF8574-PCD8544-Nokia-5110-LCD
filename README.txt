@@ -94,7 +94,8 @@ Original version written by Limor Fried/Ladyada for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above must be included in any redistribution
 
-2. Credits to Rob Tillaart for creating the PCF8574 library. 
+2. Credits to Rob Tillaart for creating the PCF8574 library. This library
+is not required, but useful for testing. I thank Rob for the inspiration.
 Check out his large collection of Arduino libraries at 
 https://github.com/RobTillaart/Arduino
 
@@ -104,30 +105,34 @@ BSD license applies. See below for more information
 
 INSTALLATION
 ============
-Download the required libraries (see links below).
+Download the required libraries (this one and the Adafruit GFX
+library, see links below).
 Use the Arduino IDE to add the .ZIP library file via the menu.
 Alternatively copy all library files into a folder under your
 arduinosketchfolder>/libraries/ folder and restart the IDE.
-
-You will also have to install the Adafruit GFX Graphics core library
-which does all the circles, text, rectangles, etc; as well as Rob 
-Tillaarts PCF8574 library, which is used to drive the PCF8574 chip.
+Also install the Adafruit GFX Graphics core library which does
+all the circles, text, rectangles, etc;.
 
 See the included example to learn more about using this library.
 
 
 TROUBLESHOOTING TIPS
 ====================
+- Read the tutorials and other documentation (see links below).
 - Use the I2C scanner sketch to see if the PCF8574 I2C LCD driver
   is properly connected and responding.
-- Test the Nokia 5110 module using the SPI connections and the 
-  original library and pcdtest example.
-- Check if all data-pins between display and interface modules are
-  properly connected, according the pins as defined in your sketch.
+- Use Rob Tillaarts PCF8574 library examples to test the proper
+  functioning of the I/O expander.
 - Use a multimeter to check pin voltages. Note: most Nokia 5110 and
   PCF8574 modules are both 3.3V and 5V complient. However, the
-  contrast level on some 5110 modules needs to be higher when powered
+  contrast level on some 5110 modules may need to be higher when powered
   by 3.3V.
+- Test the Nokia 5110 module using the SPI connections and the 
+  original library and pcdtest example. This modified library still
+  supports SPI interfacing. Make sure to use the proper constructor
+  and set the right pins as required.
+- Check if all data-pins between display and interface modules are
+  properly connected, according the pins as defined in your sketch.
   
 
 LINKS
