@@ -19,7 +19,6 @@ Library adapted by Maxint R&D to drive Nokia 5110 display via PCF8574 I2C I/O ex
 https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 *********************************************************************/
 
-#include <Wire.h>		// needed to change clock speed
 #include <avr/pgmspace.h>
 #if defined(ARDUINO) && ARDUINO >= 100
   #include "Arduino.h"
@@ -37,8 +36,6 @@ https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 
 #include <stdlib.h>
 
-//#include <Adafruit_GFX.h>
-//#include <PCF8574.h>
 #include "PCF8574_PCD8544.h"
 
 // the memory buffer for the LCD

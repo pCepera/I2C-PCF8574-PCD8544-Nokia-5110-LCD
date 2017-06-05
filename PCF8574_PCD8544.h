@@ -28,9 +28,9 @@ https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
   #include "pins_arduino.h"
 #endif
 
+#include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
-//#include <PCF8574.h>
 
 #ifdef __SAM3X8E__
   typedef volatile RwReg PortReg;
