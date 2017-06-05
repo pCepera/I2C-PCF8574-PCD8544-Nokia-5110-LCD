@@ -35,6 +35,9 @@ https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 #ifdef __SAM3X8E__
   typedef volatile RwReg PortReg;
   typedef uint32_t PortMask;
+#elif defined (ARDUINO_ARCH_ESP8266)
+  typedef volatile uint32_t PortReg;
+  typedef uint32_t PortMask;
 #else
   typedef volatile uint8_t PortReg;
   typedef uint8_t PortMask;
@@ -92,8 +95,9 @@ class PCF8574_PCD8544 : public Adafruit_GFX
   void data(uint8_t c);
   
   void setContrast(uint8_t val);
-  void clearDisplay(void);
+	void invertDisplay(boolean i);
   void display();
+	void clearDisplay(void);
   
   void drawPixel(int16_t x, int16_t y, uint16_t color);
   uint8_t getPixel(int8_t x, int8_t y);

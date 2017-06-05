@@ -19,7 +19,12 @@ Library adapted by Maxint R&D to drive Nokia 5110 display via PCF8574 I2C I/O ex
 https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 *********************************************************************/
 
+#if defined(ESP8266)
+#include <pgmspace.h>
+#endif
+#ifdef __AVR__
 #include <avr/pgmspace.h>
+#endif
 #if defined(ARDUINO) && ARDUINO >= 100
   #include "Arduino.h"
 #else
@@ -212,7 +217,13 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
   else if (isHardwareSPI()) {
     // Setup hardware SPI.
     SPI.begin();
+#ifdef ESP8266
+		// see https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/pull/27/commits
+    // Datasheet says 4 MHz is max SPI clock speed
+    SPI.setFrequency(4000000);
+#else
     SPI.setClockDivider(PCD8544_SPI_CLOCK_DIV);
+#endif
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
   }
@@ -223,11 +234,14 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
     pnMode(_din, OUTPUT);
     pnMode(_sclk, OUTPUT);
 
+// see https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/pull/27/commits
+#ifndef ESP8266
     // Set software SPI ports and masks.
     clkport     = portOutputRegister(digitalPinToPort(_sclk));
     clkpinmask  = digitalPinToBitMask(_sclk);
     mosiport    = portOutputRegister(digitalPinToPort(_din));
     mosipinmask = digitalPinToBitMask(_din);
+#endif
   }
 
   // Set common pin outputs.
@@ -283,12 +297,22 @@ inline void PCF8574_PCD8544::spiWrite(uint8_t d) {
   }
   else {
     // Software SPI write with bit banging.
+#ifdef ESP8266
+    // see https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/pull/27/commits
+    for(uint8_t bit = 0x80; bit; bit >>= 1) {
+      digitWrite(_sclk, LOW);
+      if (d & bit) digitalWrite(_din, HIGH);
+      else         digitalWrite(_din, LOW);
+      digitWrite(_sclk, HIGH);
+    }
+ #else
     for(uint8_t bit = 0x80; bit; bit >>= 1) {
       *clkport &= ~clkpinmask;
       if(d & bit) *mosiport |=  mosipinmask;
       else        *mosiport &= ~mosipinmask;
       *clkport |=  clkpinmask;
     }
+#endif
   }
 }
 
@@ -448,6 +472,14 @@ void PCF8574_PCD8544::display(void) {
   yUpdateMin = LCDHEIGHT-1;
   yUpdateMax = 0;
 #endif
+}
+
+void PCF8574_PCD8544::invertDisplay(boolean i)
+{
+  //if (isHardwareSPI()) spi_begin();
+  command(PCD8544_FUNCTIONSET);
+  command(PCD8544_DISPLAYCONTROL | (i ? PCD8544_DISPLAYINVERTED : PCD8544_DISPLAYNORMAL));
+  //if (isHardwareSPI()) spi_end();
 }
 
 // clear everything
