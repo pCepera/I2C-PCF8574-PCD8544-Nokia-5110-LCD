@@ -97,7 +97,7 @@ void serialTimeSpent(int nCnt=0)
   tStart=millis();
 }
 
-delayBlink(int nDelay, int nPin=2)
+void delayBlink(int nDelay, int nPin=2)
 { // delay some msecs and blink on/off at half delay interval
   display.digitalWrite(3, HIGH);
   digitalWrite(nPin, HIGH);
@@ -107,7 +107,6 @@ delayBlink(int nDelay, int nPin=2)
   delay(nDelay/2);
   serialTimeSpent();
 }
-
 
 void setup()
 {
