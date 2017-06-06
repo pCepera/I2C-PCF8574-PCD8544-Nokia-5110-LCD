@@ -35,7 +35,7 @@ https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 #ifdef __SAM3X8E__
   typedef volatile RwReg PortReg;
   typedef uint32_t PortMask;
-#elif defined (ARDUINO_ARCH_ESP8266)
+#elif defined(ESP8266)
   typedef volatile uint32_t PortReg;
   typedef uint32_t PortMask;
 #else
@@ -89,8 +89,10 @@ class PCF8574_PCD8544 : public Adafruit_GFX
   PCF8574_PCD8544(int8_t DC, int8_t CS, int8_t RST);
 
   void begin(uint8_t contrast = 40, uint8_t bias = 0x04);
-  //void begin(int8_t i2c_address, int32_t i2c_speed, uint8_t contrast = 40, uint8_t bias = 0x04);
-  
+#if defined(ESP8266)
+  void begin(uint32_t i2c_speed, uint8_t nPinSDA = SDA, uint8_t nPinSCL = SCL, uint8_t contrast = 40, uint8_t bias = 0x04);
+#endif
+
   void command(uint8_t c);
   void data(uint8_t c);
   
@@ -112,9 +114,11 @@ class PCF8574_PCD8544 : public Adafruit_GFX
 	*/
 
  private:
-  int8_t _i2c_address, _din, _sclk, _dc, _rst, _cs;	// _bl, 
-  uint8_t _i2c_dataOut;
-  uint8_t _i2c_error;
+  int8_t _din, _sclk, _dc, _rst, _cs;
+  int8_t _i2c_address; 	// _bl, 
+  uint8_t _i2c_dataOut, _i2c_error;
+  uint8_t _i2c_sda, _i2c_scl;
+  uint32_t _i2c_speed;
   volatile PortReg  *mosiport, *clkport;
   PortMask mosipinmask, clkpinmask;
 

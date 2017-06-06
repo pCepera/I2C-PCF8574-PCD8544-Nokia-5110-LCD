@@ -106,6 +106,15 @@ PCF8574_PCD8544::PCF8574_PCD8544(int8_t i2c_address, int8_t SCLK, int8_t DIN, in
     int8_t CS, int8_t RST) : Adafruit_GFX(LCDWIDTH, LCDHEIGHT)
 {
   _i2c_address=i2c_address;
+#ifdef ESP8266
+  _i2c_sda=SDA;
+  _i2c_scl=SCL;
+  _i2c_speed=1000000L;
+#else
+  _i2c_sda=0;
+  _i2c_scl=0;
+  _i2c_speed=400000L;
+#endif
   //_bl=BL;
   _din = DIN;
   _sclk = SCLK;
@@ -142,13 +151,13 @@ PCF8574_PCD8544::PCF8574_PCD8544(int8_t DC, int8_t CS, int8_t RST):
   Adafruit_GFX(LCDWIDTH, LCDHEIGHT)
 {
   // -1 for din and sclk specify using hardware SPI
-  //_bl=-1;
-  _i2c_address=-1;
   _din = -1;
   _sclk = -1;
   _dc = DC;
   _rst = RST;
   _cs = CS;
+  _i2c_address=-1;
+  //_bl=-1;
 }
 
 
@@ -196,7 +205,6 @@ uint8_t PCF8574_PCD8544::getPixel(int8_t x, int8_t y) {
   return (pcd8544_buffer[x+ (y/8)*LCDWIDTH] >> (y%8)) & 0x1;  
 }
 
-
 void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
 {
 	//Serial.println(F("PCF8574_PCD8544 begin"));
@@ -204,9 +212,15 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
 		// Setup I2C via PCF8574 on _i2c_address
 		_i2c_dataOut = 0x00;		// TODO: should this value be written after begin?
 		_i2c_error = 0;
+#ifdef ESP8266
+		Wire.begin(_i2c_sda, _i2c_scl);			// esp8266 can set alternative I2C pins 
+#else
 		Wire.begin();
-		Wire.setClock(400000L);		// set clock a bit faster than the default 100 kHz (should be set after the call to Wire.begin() in PCF8574::begin();
-															// 400000L (400kHz) seems fastest speed on Atmega328 8Mhz, faster (800kHz) may be possible on 16Mhz
+#endif
+		Wire.setClock(_i2c_speed);		// set clock a bit faster than the default 100 kHz
+																	// 400000L (400kHz) seems fastest speed on Atmega328 8Mhz, faster (800kHz) may be possible on 16Mhz
+																	// 400000L (400kHz) seems stable speed on ESP8266@80Mzh, faster (1MHz) is possible, but perhaps less stable
+
 		// optimize by always setting CS low (active) and starting by DC in command mode
 		// for the remainder of the session CS is not changed as the PCD8544 can be assumed the only SPI device on this I2C i/o expander
 		if(_cs > 0)
@@ -289,6 +303,18 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
   display();
 }
 
+#ifdef ESP8266
+void PCF8574_PCD8544::begin(uint32_t i2c_speed, uint8_t nPinSDA, uint8_t nPinSCL, uint8_t contrast, uint8_t bias)
+{	// alternative begin() for ESP to allow setting of I2C speed and/or different I2C pins
+	if (isI2C())
+	{
+		_i2c_sda=nPinSDA;
+		_i2c_scl=nPinSCL;
+		_i2c_speed=i2c_speed;
+		begin(contrast, bias);
+	}	
+}
+#endif
 
 inline void PCF8574_PCD8544::spiWrite(uint8_t d) {
   if (isHardwareSPI()) {
@@ -425,8 +451,8 @@ void PCF8574_PCD8544::display(void) {
 		  	i2cWrite(pcd8544_buffer[(LCDWIDTH*p)+col], false);
     		uCnt++;
     		if(uCnt%2==0 && col<maxcol-1)
-   			{	// can't send too much in one go because I2C has limited buffer (32 bytes)
-   				// endTransmission() Combining more than two column-bytes causes data to be lost, even when running at lower speeds.
+   			{	// can't send too much in one go because I2C has limited buffer (32 bytes) on both ATmega and ESP8266
+   				// Combining more than two column-bytes per transmission causes data to be lost, even when running at lower speeds.
    				// Note that for each byte 16 clk changes are required, meaning 16 I2C bytes are send per byte.
    				// No error (e.g. for buffer overflow) is given, but data is definitely not complete.
    				// (ending every 4th column gives half complete columns, every 8th gives quarter screen)
@@ -450,6 +476,12 @@ void PCF8574_PCD8544::display(void) {
 
 	    //if (_cs > 0)
 	    //  digitWrite(_cs, HIGH);
+#ifdef ESP8266
+			// Since the display method takes the longest time on the relative slow I2C transmission,
+			// the watchdog of the ESP may bite after repetitive calls
+			// This is a good moment to feed that dog and keep it happy!
+			yield();
+#endif
 		}
 		else
 		{
