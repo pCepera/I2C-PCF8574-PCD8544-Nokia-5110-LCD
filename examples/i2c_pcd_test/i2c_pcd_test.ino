@@ -112,12 +112,16 @@ void delayBlink(int nDelay, int nPin=2)
 void setup()
 {
   pinMode(2, OUTPUT);
-  Serial.begin(115200);
-  serialTimeSpent();
+  Serial.begin(115200);             // For ESP-01 board: Disable Serial.begin and call display.begin specifying GPIO 1 and 3.
+  Serial.println(F("\n\n"));
   Serial.println(F("i2c_pcd_test"));
+  serialTimeSpent();
 
   uint32_t tStart=millis();
-  display.begin();
+  display.begin();        // regular begin() using default settings and high speeed (1MHz on ESP8266, 400kHz on others)
+  //display.begin(1000000L, 14, 13);   // Only ESP8266: begin() using different speed and other GPIO pins (regular: SDA=GPIO4, SCL=GPIO5)
+                                     // Note: not all ESP8266 pins are equally usable, eg. pins 0, 2 and 15 have boot conditions. 
+                                     // For ESP-01 the serial pins can be used: SDA on GPIO1 (TX) and SCL on GPIO3 (RX), 
   serialTimeSpent(1);
   delayBlink(100);
   // init done
@@ -235,9 +239,15 @@ void setup()
 #endif
 
   display.invertDisplay(true);
+  serialTimeSpent(30);
   delayBlink(1000); 
   display.invertDisplay(false);
+  serialTimeSpent(31);
   delayBlink(1000); 
+  display.invertDisplay(true);
+  delayBlink(500); 
+  display.invertDisplay(false);
+  delayBlink(500); 
 
   // draw many lines
   // Note: calling the display() method after each line takes most time in the I2C library
@@ -380,7 +390,6 @@ void testdrawrect(void) {
   for (int16_t i=0; i<display.height()/2; i+=2) {
     display.drawRect(i, i, display.width()-2*i, display.height()-2*i, BLACK);
     display.display();
-    //serialTimeSpent(50+i);
   }
 }
 
@@ -388,12 +397,10 @@ void testdrawline() {
   for (int16_t i=0; i<display.width(); i+=4) {
     display.drawLine(0, 0, i, display.height()-1, BLACK);
     display.display();
-    //serialTimeSpent(100+i);
   }
   for (int16_t i=0; i<display.height(); i+=4) {
     display.drawLine(0, 0, display.width()-1, i, BLACK);
     display.display();
-    //serialTimeSpent(200+i);
   }
   delayBlink(250);
   
@@ -402,12 +409,10 @@ void testdrawline() {
   for (int16_t i=0; i<display.width(); i+=4) {
     display.drawLine(0, display.height()-1, i, 0, BLACK);
     display.display();
-    //serialTimeSpent(300+i+1);
   }
   for (int8_t i=display.height()-1; i>=0; i-=4) {
     display.drawLine(0, display.height()-1, display.width()-1, i, BLACK);
     display.display();
-    //serialTimeSpent(400+i);
   }
   delayBlink(250);
   
