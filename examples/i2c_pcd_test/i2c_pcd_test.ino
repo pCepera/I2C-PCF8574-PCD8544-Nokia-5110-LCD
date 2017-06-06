@@ -14,6 +14,9 @@ products from Adafruit!
 Written by Limor Fried/Ladyada  for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above, and the splash screen must be included in any redistribution
+
+Example sketch adapted by Maxint R&D to demonstrate I2C driven display
+https://github.com/maxint-rd/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 *********************************************************************/
 
 #include <PCF8574_PCD8544.h>
