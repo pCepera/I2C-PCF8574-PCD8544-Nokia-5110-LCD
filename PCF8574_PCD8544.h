@@ -16,7 +16,7 @@ BSD license, check license.txt for more information
 All text above, and the splash screen must be included in any redistribution
 
 Library adapted by Maxint R&D to drive Nokia 5110 display via PCF8574 I2C I/O expander
-https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
+https://github.com/maxint-rd/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 *********************************************************************/
 #ifndef _PCF8574_PCD8544_H
 #define _PCF8574_PCD8544_H
