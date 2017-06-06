@@ -11,6 +11,8 @@ This library is based on the Adafruit PCD8544 Nokia 5110 LCD library,
 but in addition to directly using SPI it allows the display to be driven
 via the (shared) I2C bus which only requires two data-lines (SDA and SCL).
 On the Arduino UNO, Nano and Pro Mini, these can be found on pins A4 and A5.
+On the ESP8266 default pins are GPIO4 and GPIO05, but alternative pins can be
+set in the call to begin(). E.g. on the ESP-01 board the serial pins can be used.
 
 The I2C data is expanded to the recommended 5 pins using the PCF8274 I2C I/O
 expander. A very affordable board and abundantly available board that
@@ -151,6 +153,12 @@ Arduino I2C scanner sketches:
     https://playground.arduino.cc/Main/I2cScanner
 The original Adafruit PCD8544 Nokia 5110 LCD SPI library:
     https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library
+
+
+HISTORY
+=======
+20170605 - first I2C version for ATmega 328
+20170606 - added support for ESP8266
 
 
 LICENSE
