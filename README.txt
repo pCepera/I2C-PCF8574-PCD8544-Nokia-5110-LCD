@@ -140,7 +140,7 @@ TROUBLESHOOTING TIPS
 LINKS
 =====
 This library:
-    https://github.com/maxint/I2C-PCF8574-PCD8544-Nokia-5110-LCD
+    https://github.com/maxint-rd/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 Adafruit GFX Library: 
     https://github.com/adafruit/Adafruit-GFX-Library
 Rob Tillaarts PCF8574 library:
