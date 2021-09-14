@@ -19,7 +19,7 @@ Library adapted by Maxint R&D to drive Nokia 5110 display via PCF8574 I2C I/O ex
 https://github.com/maxint-rd/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 *********************************************************************/
 
-#if defined(ESP8266)
+#if defined(ESP32) || defined(ESP8266)
 #include <pgmspace.h>
 #endif
 #ifdef __AVR__
@@ -106,7 +106,7 @@ PCF8574_PCD8544::PCF8574_PCD8544(int8_t i2c_address, int8_t SCLK, int8_t DIN, in
     int8_t CS, int8_t RST) : Adafruit_GFX(LCDWIDTH, LCDHEIGHT)
 {
   _i2c_address=i2c_address;
-#ifdef ESP8266
+#ifdef ESP32 || ESP8266
   _i2c_sda=SDA;
   _i2c_scl=SCL;
   _i2c_speed=1000000L;
@@ -212,7 +212,7 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
 		// Setup I2C via PCF8574 on _i2c_address
 		_i2c_dataOut = 0x00;		// TODO: should this value be written after begin?
 		_i2c_error = 0;
-#ifdef ESP8266
+#ifdef ESP32 || ESP8266
 		Wire.begin(_i2c_sda, _i2c_scl);			// esp8266 can set alternative I2C pins 
 #else
 		Wire.begin();
@@ -231,7 +231,7 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
   else if (isHardwareSPI()) {
     // Setup hardware SPI.
     SPI.begin();
-#ifdef ESP8266
+#ifdef ESP32 || ESP8266
 		// see https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/pull/27/commits
     // Datasheet says 4 MHz is max SPI clock speed
     SPI.setFrequency(4000000);
@@ -249,7 +249,7 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
     pnMode(_sclk, OUTPUT);
 
 // see https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/pull/27/commits
-#ifndef ESP8266
+#ifndef ESP32 || ESP8266
     // Set software SPI ports and masks.
     clkport     = portOutputRegister(digitalPinToPort(_sclk));
     clkpinmask  = digitalPinToBitMask(_sclk);
@@ -303,7 +303,7 @@ void PCF8574_PCD8544::begin(uint8_t contrast, uint8_t bias)
   display();
 }
 
-#ifdef ESP8266
+#ifdef ESP32 || ESP8266
 void PCF8574_PCD8544::begin(uint32_t i2c_speed, uint8_t nPinSDA, uint8_t nPinSCL, uint8_t contrast, uint8_t bias)
 {	// alternative begin() for ESP to allow setting of I2C speed and/or different I2C pins
 	if (isI2C())
@@ -323,7 +323,7 @@ inline void PCF8574_PCD8544::spiWrite(uint8_t d) {
   }
   else {
     // Software SPI write with bit banging.
-#ifdef ESP8266
+#ifdef ESP32 || ESP8266
     // see https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library/pull/27/commits
     for(uint8_t bit = 0x80; bit; bit >>= 1) {
       digitWrite(_sclk, LOW);
@@ -476,7 +476,7 @@ void PCF8574_PCD8544::display(void) {
 
 	    //if (_cs > 0)
 	    //  digitWrite(_cs, HIGH);
-#ifdef ESP8266
+#ifdef ESP32 || ESP8266
 			// Since the display method takes the longest time on the relative slow I2C transmission,
 			// the watchdog of the ESP may bite after repetitive calls
 			// This is a good moment to feed that dog and keep it happy!
