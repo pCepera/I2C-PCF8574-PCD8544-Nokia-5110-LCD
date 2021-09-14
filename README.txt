@@ -80,6 +80,7 @@ Pin Description
 See the included example for suggested connections of the display module
 to the I2C LCD driver interface.
 
+For a blue display, set a 10 kOhm resistance on the PCF8574 I2C LCD driver between VCC (pin2) and P3 (pin16)
 
 CREDITS
 ========
